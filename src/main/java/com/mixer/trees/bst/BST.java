@@ -5,9 +5,9 @@ import java.util.Queue;
 
 public class BST {
 
-    BinaryNode root;
+    public BinaryNode root;
 
-    BST() {
+    public BST() {
         root = null;
     } //O(1) / O(1)
 
@@ -29,7 +29,7 @@ public class BST {
         }
     }
 
-    void insert(int value) {
+    public void insert(int value) {
         insert(root, value);
     }
 
@@ -47,7 +47,7 @@ public class BST {
     }
 
     //inOrder O(N) / O(N)
-    void inOrder(BinaryNode node) {
+    public void inOrder(BinaryNode node) {
         if(node == null) {
             return;
         }

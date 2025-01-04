@@ -1,9 +1,9 @@
 package com.mixer.trees.bst;
 
 public class BinaryNode {
-    int value;
-    BinaryNode left;
-    BinaryNode right;
+    public int value;
+    public BinaryNode left;
+    public BinaryNode right;
 
     int height;
 

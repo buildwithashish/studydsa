@@ -299,34 +299,376 @@ class AddDigits {
         return false;
     }
 
+    public static int countStudents(List<Integer> students, List<Integer> sandwiches) {
+
+        int j=0;
+        List<Integer> traversedStudents = new ArrayList<>();
+        for(int i=0, k=0; k<students.size();k++) {
+
+            System.out.println("j="+ j + " -- " + sandwiches.get(j));
+            System.out.println("i="+ i + " -- " + students.get(i));
+            System.out.println(students.size());
+
+            if(sandwiches.get(j) == students.get(i)) {
+                //i=0;
+                j++;
+                students.remove(students.get(i));
+            } else {
+                int currentStudent = students.get(i);
+                System.out.println(currentStudent);
+                System.out.println("Started"+students);
+                students.remove(i);
+                System.out.println("Intermediate"+students);
+                students.add(currentStudent);
+                System.out.println("Finished"+students);
+            }
+            System.out.println(students);
+            System.out.println(sandwiches);
+            System.out.println("--------------");
+        }
+        return students.size();
+    }
     public static void main(String[] args) {
-        //System.out.println(addDigits(38));
-        parseTimeStamps("1723596180");
+        countStudents(Arrays.asList(1,1,1,0,0,1), Arrays.asList(1,0,0,0,1,1));
     }
 
-    private String parseTimeStampsUTC(String token) {
-        Pattern p = Pattern.compile("\\d+");
-        Matcher m = p.matcher(token);
 
-        while (m.find()) {
-            String time = m.group();
-            // The input value is in seconds, convert it to milliseconds
-            long milliseconds = Long.parseLong(time) * 1000L;
+}
 
-            // Create a Date object from the milliseconds
-            Date sqlDate = new Date(milliseconds);
+class SmallestLexicographicalString {
+    public static String removeDuplicateLetters(String s) {
 
-            // Format the date in the desired pattern
-            SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy hh:mm:ss a");
-            formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-            String timestamp = formatter.format(sqlDate);
-
-            // Replace the original time value in the token with the formatted timestamp
-            token = token.replace(time, timestamp);
+        Map<Character, Integer> charCount = new HashMap<>();
+        for(char c : s.toCharArray()) {
+            if(charCount.containsKey(c)) {
+                int currCount = charCount.get(c);
+                charCount.put(c, currCount+1);
+            } else {
+                charCount.put(c, 1);
+            }
         }
 
-        System.out.println("parsed timestamp = " + token);
-        return token;
+        Stack<Character> lex = new Stack<>();
+        for(char c : s.toCharArray()) {
+            charCount.put(c, charCount.get(c) - 1);
+
+            if (lex.contains(c)) {
+                continue;
+            }
+
+            while (!lex.isEmpty() && lex.peek() > c && charCount.get(lex.peek()) > 0) {
+                lex.pop();
+            }
+
+            lex.push(c);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for(char c : lex) {
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        System.out.println(removeDuplicateLetters("bcabc"));
+    }
+}
+
+class CountTrafficCollision {
+
+    public static int countCollisions(String directions) {
+        Stack<Character> stack = new Stack<>();
+        int collisions = 0;
+
+        for (char c : directions.toCharArray()) {
+            // Handle 'R' (moving right)
+            if (stack.isEmpty()) {
+                stack.push(c);
+            } else {
+                if(c == 'R') {
+                    while (!stack.isEmpty()) {
+                        if(stack.peek() == 'L') {
+                            collisions += 2; // Head-on collision
+                            stack.pop(); // Remove 'R' from the stack
+                        } else if(stack.peek() == 'S') {
+                            collisions += 1;
+                            stack.pop();
+                            break;
+                        } else {
+                            stack.pop();
+                            break;
+                        }
+
+                    }
+                    stack.push(c);
+                }
+                // Handle 'L' (moving left)
+                else if (c == 'L') {
+                    while (!stack.isEmpty()) {
+                        if(stack.peek() == 'R') {
+                            collisions += 2; // Head-on collision
+                            stack.pop(); // Remove 'R' from the stack
+                        } else if(stack.peek() == 'S') {
+                            collisions += 1;
+                            stack.pop();
+                            break;
+                        } else {
+                            stack.pop();
+                            break;
+                        }
+
+                    }
+                    stack.push(c);
+                    //stack.push(c); // Add 'L' to the stack
+                }
+                // Handle 'S' (stopped)
+                else if (c == 'S') {
+                    while (!stack.isEmpty()) {
+                        if (stack.peek() == 'R') {
+                            collisions += 1; // R hits S
+                            stack.pop(); // Remove 'R' from the stack
+                        } else if (stack.peek() == 'L') {
+                            collisions += 1; // L hits S
+                            stack.pop(); // Remove 'L' from the stack
+                            break; // Stop checking further for 'L' after it hits 'S'
+                        } else {
+                            stack.pop();
+                            break; // No more relevant cars in the stack
+                        }
+                    }
+                    stack.push(c);
+                }
+            }
+            }
+
+
+
+        return collisions;
+    }
+
+    public static void main(String[] args) {
+        //RLRSLL
+
+        String directions1 = "LSRRSLLRLS";
+        System.out.println(countCollisions(directions1)); // Output: 5
+
+        String directions2 = "LLRR";
+        System.out.println(countCollisions(directions2)); // Output: 0
+    }
+}
+
+class TwoSum {
+    public static int[] twoSum(int[] nums, int target) {
+        int[] result = new int[2];
+        Map<Integer, Integer> map = new HashMap<>();
+        for(int i=0; i<nums.length; i++) {
+
+            int rem = target-nums[i];
+            if(map.containsKey(rem)) {
+                result[0] = i;
+                result[1] = map.get(rem);
+                break;
+            }
+
+            map.put(nums[i], i);
+        }
+
+        return result;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(Arrays.toString(twoSum(new int[]{3,2,4}, 6)));
+    }
+}
+
+/*
+Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+
+An input string is valid if:
+
+Open brackets must be closed by the same type of brackets.
+Open brackets must be closed in the correct order.
+Every close bracket has a corresponding open bracket of the same type.
+
+Example 1:
+Input: s = "()"
+Output: true
+
+Example 2:
+Input: s = "()[]{}"
+Output: true
+
+Example 3:
+Input: s = "(]"
+Output: false
+
+Example 4:
+Input: s = "([])"
+Output: true
+ */
+class ValidParantheses {
+    public static void main(String[] args) {
+        System.out.println( isValid("([)]"));
+    }
+
+    public static boolean isValid(String s) {
+        
+        Stack<Character> stack = new Stack<>();
+        for(Character c : s.toCharArray()) {
+            if(c=='(' || c=='{' || c=='[') {
+                stack.push(c);
+            } else {
+                if(stack.isEmpty()) return false;
+
+                char top = stack.pop();
+                if(c==')' && top!='('
+                    || c=='}' && top!='{'
+                    || c==']' && top!='[') {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+}
+
+class LongestValidParantheses {
+    public static void main(String[] args) {
+        System.out.println(longestValidParentheses("()(()"));
+    }
+
+    public static int longestValidParentheses(String s) {
+        Stack<Integer> stack = new Stack<>();
+        stack.push(-1);  // Base index
+        int maxLength = 0;
+
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '(') {
+                stack.push(i);
+            } else {
+                stack.pop();
+                if (stack.isEmpty()) {
+                    stack.push(i);
+                } else {
+                    maxLength = Math.max(maxLength, i - stack.peek());
+                }
+            }
+        }
+
+        return maxLength;
+    }
+}
+
+class BestTimeToSellAStock {
+    public static void main(String[] args) {
+        System.out.println(maxProfit(new int[]{}));
+    }
+
+    public static int maxProfit(int[] prices) {
+        //Below is incompetent solution with O(n^2) complexity.
+        //For large set of data, it will take more time to process. ot it can go stackoverflow error.
+        /*Set<Integer> results = new TreeSet<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                if(o1 > o2) return -1;
+                else if(o1 < o2) return 1;
+                else return 0;
+            }
+        });
+        results.add(0);
+        for(int i=0; i<prices.length; i++) {
+            for(int j=prices.length-1; j>=i; j--) {
+                int diff = prices[j]-prices[i];
+                if(diff >= 0)
+                    results.add(diff);
+            }
+        }
+
+        return results.iterator().next();
+        */
+        
+        //Below is the optimized solution with O(n) complexity.
+        //It is also called as Kadane's Algorithm.
+        int buy = prices[0];
+        int profit = 0;
+        for(int i=1; i<prices.length; i++) {
+            if(prices[i] < buy) {
+                buy = prices[i];
+            } else if(prices[i]-buy > profit) {
+                profit = prices[i]-buy;
+            }
+        }
+        return profit;
+    }
+}
+
+class ValidPalindrome {
+    public static void main(String[] args) {
+        System.out.println(isPalindrome("0P"));
+    }
+
+    public static boolean isPalindrome(String s) {
+        s = s.toLowerCase();
+        //a=97, z=122
+        StringBuffer sb = new StringBuffer();
+        for(char c : s.toCharArray()) {
+            int asciiCode = (int)c;
+            if(asciiCode>=97 && asciiCode<=122) {
+                sb.append(c);
+            }
+        }
+        if(sb.toString().equals(sb.reverse().toString()))
+            return true;
+
+        return false;
+    }
+}
+
+class Anagram {
+    public static void main(String[] args) {
+        System.out.println(isAnagram("anagram", "nagaram"));
+    }
+
+    public static boolean isAnagram(String s, String t) {
+        Map<Character, Integer> charCount = new HashMap<>();
+        for(Character c : s.toCharArray()) {
+           charCount.put(c, charCount.getOrDefault(c, 0)+1);
+        }
+
+        for(Character c : t.toCharArray()) {
+            charCount.put(c, charCount.getOrDefault(c, 0)-1);
+        }
+
+        for(Character c : charCount.keySet()) {
+            if(charCount.get(c) != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+class BinarySearch {
+    public static void main(String[] args) {
+        System.out.println(search(new int[]{-1,0,3,5,9,12}, 9));
+    }
+
+    public static int search(int[] nums, int target) {
+        int endIndex = nums.length-1;
+        int startIndex = 0;
+        while(startIndex <= endIndex) {
+            int midIndex = (startIndex+endIndex)/2;
+            if(nums[midIndex] == target) {
+                return midIndex;
+            } else {
+                if(nums[midIndex] > target) {
+                    endIndex = midIndex-1;
+                } else {
+                    startIndex = midIndex+1;
+                }
+            }
+        }
+        return -1;
     }
 }
